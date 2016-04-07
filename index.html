@@ -1,0 +1,383 @@
+<!doctype html>
+<title>jigsass-objects-card</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="style.css?05" rel="stylesheet">
+<link href="jigsass-logo.png" rel="shortcut icon">
+<script type="text/javascript">WebFontConfig={google:{families:["Roboto:400,100,300,500:latin"]}},function(){var e=document.createElement("script");e.src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js",e.type="text/javascript",e.async="true";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}();</script>
+<script>examples={"base":"","target":"_self","css":["assets/sg.css"],"js":[],"bodyjs":[],"htmlcss":"background:none;border:0;clip:auto;display:block;height:auto;margin:0;padding:0;position:static;width:auto","bodycss":"background:none;border:0;clip:auto;display:block;height:auto;margin:0;padding:0;position:static;width:auto"};</script>
+
+<header>
+	<nav>
+		<img src="jigsass-logo.png" alt="jigsass-objects-card">
+		
+	<ul>
+		
+				<li>
+					<a href="#card"><span>Card</span></a>
+					
+	<ul>
+		
+				<li>
+					<a href="#introduction"><span>Introduction</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#configuration"><span>Configuration</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#card-mixin"><span>Card Mixin</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#base"><span>Base</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#modifier-raised"><span>Modifier: raised</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#item-section"><span>Item: Section</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#context-has-card"><span>Context: has-card</span></a>
+					
+				</li>
+				
+	</ul>
+	
+				</li>
+				
+	</ul>
+	
+	</nav>
+</header>
+
+<main>
+	
+		<section id="card">
+			<h2>Card</h2>
+			<div>
+				
+				
+		<section id="introduction">
+			<h3>Introduction</h3>
+			<div>
+				<p><a href="https://npmjs.org/package/jigsass-objects-card"><img src="https://badge.fury.io/js/jigsass-objects-card.svg" alt="NPM version"></a>
+<a href="https://david-dm.org/TxHawks/jigsass-objects-card"><img src="https://david-dm.org/TxHawks/jigsass-objects-card.svg?theme=shields.io" alt="Dependency Status"></a></p>
+<p>An unopinionated, configurable implementation of the card UI pattern.</p>
+<h4 id="installation">Installation</h4>
+<p>Using npm:</p>
+<pre><code class="lang-sh">npm i -S jigsass-objects-card
+</code></pre>
+<h4 id="usage">Usage</h4>
+<p>First, you need to import JigSass Card:</p>
+<pre><code class="lang-scss">@import &#39;path/to/jigsass-objects-card/scss/index&#39;;
+</code></pre>
+<p>And optionally <a href="#configuration">reconfigure</a> the defaults to your liking.</p>
+<p>Like all other JigSass modules, JigSass Card does not automatically generate any CSS when imported.
+In order to use its classes, you would have to first explicitly indicate your intention to use
+them, using the <a href="#card-mixin">jigsass-card</a> mixin, Leaving us with small and maintainable css:</p>
+<pre><code class="lang-scss">@include jigsass-card([$item, $modifier, $from-brekpoint, $until-breakpoint, $misc-breakpoint]);
+</code></pre>
+<p>All JigSass Card classes are responsive-enabled, using
+<a href="https://txhawks.github.io/jigsass-tools-mq/">JigSass MQ</a> and the breakpoints defined in the
+<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>
+variable.</p>
+<p>Based on the arguments passed to the jigsass-card mixin, responsive modifiers are
+generated according to the following logic:</p>
+<pre><code class="lang-scss">.o-card[--modifier|__item][-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
+</code></pre>
+<p>So, assuming the <code>medium</code>, <code>large</code> and <code>landscape</code> breakpoints are defined in <code>$jigsass-breakpoints</code>
+as <code>600px</code>, <code>1024px</code> and <code>(orientation: landscape)</code> respectively,</p>
+<pre><code class="lang-scss">@include jigsass-card($modifier: raised);
+</code></pre>
+<p>will generate the <code>.o-card--raised</code> class, which is not limited to any media-query.</p>
+<pre><code class="lang-scss">@include jigsass-card( $modifier: raised, $until: medium);
+</code></pre>
+<p>will generate the <code>.o-card--raised--until-medium</code> class, which will be in effect at
+<code>(max-width: 37.49em)</code> and will override styles in the default class until that point.</p>
+<pre><code class="lang-scss">@include jigsass-card($modifier: raised, $from: large, $misc: landscape);
+</code></pre>
+<p>will generate the <code>.o-card--raised--from-large-when-landscape</code> class, which will go into
+effect at <code>(min-width: 64em) and (orientation: landscape)</code> and will override styles in the default
+class under these  conditions.</p>
+<p>Regardless of how many times a class is included, or where, it will only be generated once,
+where the <code>jigsass-objects-card</code> partial was imported, leaving us with a css file as small
+as possible, and a predictable cascade.</p>
+<p>The <code>jigsass-card</code> mixin will also generate a <code>o-has-card</code> class the first time it is called, which
+is used for setting the background color of elements containing cards.</p>
+<p><strong>License:</strong> MIT</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="configuration">
+			<h3>Configuration</h3>
+			<div>
+				<p>Because of the many style variations cards could have throughout different designs
+and implementations, JigSass Card allows for complete modification through
+configuration variables.</p>
+<h4 id="container-background">Container Background</h4>
+<pre><code class="lang-scss">$jigsass-has-card-bgc
+</code></pre>
+<p><strong>Type:</strong> <code>Color</code></p>
+<p>The background color of elements containing cards.</p>
+<p>Used for setting the background color of
+the <code>.o-has-card</code> contextual modifier.</p>
+<p><strong>Default:</strong> <code>#ebebeb</code></p>
+<h4 id="card-style">Card Style</h4>
+<pre><code class="lang-scss">$jigsass-card-defaults
+</code></pre>
+<p><strong>Type:</strong> <code>Map</code></p>
+<p>CSS declarations to apply to cards.</p>
+<p>Since cards are such a prevalent UI pattern, yet with so
+many variations, subtle or otherwise, JigSass Cards come with defaults that
+are configurable to the last value and declaration. Don&#39;t like our defaults?
+Make your own.</p>
+<p><strong>Default:</strong> <code>(background-color: #f0f0f0)</code></p>
+<h4 id="card-modifiers">Card Modifiers</h4>
+<pre><code class="lang-scss">$jigsass-card-modifiers
+</code></pre>
+<p> <strong>Type:</strong> <code>Map</code></p>
+<p>CSS declarations for card modifiers, with each modifier being a nested map at the first level.</p>
+<p><strong>Default:</strong></p>
+<pre><code class="lang-scss">(
+  raised: (
+    box-shadow: 0 4px 5px -2px rgba(#333, .5),
+    position: relative,
+    transition: .15s transform linear,
+
+    &#39;&amp;:after&#39;: (
+      bottom: 0,
+      box-shadow: 0 8px 6px -3px rgba(#333, .3),
+      content: &#39;&#39;,
+      left: 0,
+      opacity: 0,
+      position: absolute,
+      right: 0,
+      top: 0,
+      transition: .15s opacity linear,
+      z-index: -1,
+    ),
+
+    &#39;&amp;:hover&#39;: (
+      transform: translatey(-4px) scale(1.01),
+
+      &#39;&amp;:after&#39;: (
+        opacity: 1,
+      ),
+    ),
+  )
+)
+</code></pre>
+<h4 id="section-border">Section Border</h4>
+<pre><code class="lang-scss">$jigsass-card-section-border
+</code></pre>
+<p><strong>Type:</strong> List</p>
+<p>Border style of a card section</p>
+<p>A list in the format of <code>length</code> <code>style</code> <code>color</code></p>
+<p><strong>Default:</strong> 1px solid #ccc !default;</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="card-mixin">
+			<h3>Card Mixin</h3>
+			<div>
+				<pre><code class="lang-scss">@mixin jigsass-card($item: false, $modifier: false, $from: false, $until: false, $misc: false) { ... }
+</code></pre>
+<h4 id="description">Description</h4>
+<p>Generates a <code>card</code>, a modifier or an item class, optionally limited to a specific breakpoint defined in
+<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+<p>Will also automatically generates the contextual <code>.o-has-card</code> modifier.</p>
+<h4 id="parameters">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$item</code></td>
+<td>A <code>card</code> item, if relevant. Just the item&#39;s name, e.g., <code>$item: section</code> for <code>o-card__section</code>.</td>
+<td><code>String</code> or <code>Boolean</code></td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>$modifier</code></td>
+<td>A <code>card</code> modifier.</td>
+<td><code>String</code> or <code>Boolean</code></td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>$from</code></td>
+<td>The name of breakpoint used as the min-width condition</td>
+<td><code>String</code> or <code>Boolean</code></td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>$until</code></td>
+<td>The name of breakpoint used as the max-width condition</td>
+<td><code>String</code> or <code>Boolean</code></td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>$misc</code></td>
+<td>The name of a miscellaneous media query condition</td>
+<td><code>String</code> or <code>Boolean</code></td>
+<td>false</td>
+</tr>
+</tbody>
+</table>
+<h4 id="example">Example</h4>
+<pre><code class="lang-scss">@include jigsass-card($from: medium);
+</code></pre>
+<p>Will generate:</p>
+<pre><code class="lang-scss">@media (min-width: 37.5em) {
+  .o-card--from-medium { ... }
+  .o-has-card--from-medium { ... }
+}
+</code></pre>
+
+				
+			</div>
+		</section>
+		
+		<section id="base">
+			<h3>Base</h3>
+			<div>
+				<p>An individual piece of distinguished UI</p>
+<p>  Cards can be used to set apart pieces of content in an effective
+  yet geeric manner. It can contain an Image, headline, texts and
+  interactive elements.</p>
+<pre><code class="lang-example:html">  &lt;article class=&#39;o-card u-mb--4 u-pb--4 u-as--4&#39;&gt;
+    &lt;figure&gt;
+      &lt;img src=&#39;https://unsplash.it/600/300?random&#39; /&gt;
+    &lt;/figure&gt;
+
+    &lt;header class=&#39;u-ph--4&#39;&gt;
+      &lt;h3&gt;This is a card&lt;/h3&gt;
+      &lt;p&gt;&lt;strong&gt;A piece of distinguished UI&lt;/strong&gt;&lt;/p&gt;
+    &lt;/header&gt;
+
+    &lt;p class=&#39;u-ph--4&#39;&gt;
+      Cards can be used to set apart pieces of content in an effective
+      yet geeric manner. It can contain an Image, headline, texts and
+      interactive elements.
+    &lt;/p&gt;
+  &lt;/article&gt;
+</code></pre>
+<h4 id="include-with-">include with:</h4>
+<pre><code class="lang-scss">  @include jigsass-card([$from, $until, $misc]);
+</code></pre>
+<h4 id="related-mixins-">Related Mixins:</h4>
+<p>  <a href="#card-mixin">jigsass-card</a>: Generates a list abstraction or an abstraction&#39;s modifier,
+  optionally limited to a specific breakpoint defined in
+  <a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="modifier-raised">
+			<h3>Modifier: raised</h3>
+			<div>
+				<pre><code class="lang-example:html">  &lt;article class=&#39;[ o-card o-card--raised ]  u-mb--4 u-pb--4 u-as--4&#39;&gt;
+    &lt;figure&gt;
+      &lt;img src=&#39;https://unsplash.it/600/300?random&#39; /&gt;
+    &lt;/figure&gt;
+
+    &lt;header class=&#39;u-ph--4&#39;&gt;
+      &lt;h3&gt;This is a card with a `raised` modifier&lt;/h3&gt;
+      &lt;p&gt;&lt;strong&gt;A piece of distinguished UI&lt;/strong&gt;&lt;/p&gt;
+    &lt;/header&gt;
+
+    &lt;p class=&#39;u-ph--4&#39;&gt;
+      Cards can be used to set apart pieces of contenet in an effective
+      yet geeric manner. It can contain an Image, headline, texts and
+      interactive elements.
+    &lt;/p&gt;
+  &lt;/article&gt;
+</code></pre>
+<h4 id="include-with-">include with:</h4>
+<pre><code class="lang-scss">  @include jigsass-card($modifier: raised[, $from, $until, $misc]);
+</code></pre>
+<h4 id="related-mixins-">Related Mixins:</h4>
+<p>  <a href="#card-mixin">jigsass-card</a>: Generates a list abstraction or an abstraction&#39;s modifier,
+  optionally limited to a specific breakpoint defined in
+  <a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="item-section">
+			<h3>Item: Section</h3>
+			<div>
+				<p>A distinct section within a card</p>
+<pre><code class="lang-example:html">  &lt;article class=&#39;o-card u-mb--4 u-pb--4 u-as--4&#39;&gt;
+    &lt;figure&gt;&lt;img src=&#39;https://unsplash.it/600/200?random&#39; /&gt;&lt;/figure&gt;
+
+    &lt;h3 class=&#39;u-ph--4&#39;&gt;This is a card with with sub sections&lt;/h3&gt;
+
+    &lt;ul class=&#39;o-card__section u-as--2&#39;&gt;
+      &lt;li class=&#39;u-ph--4 u-pt--2 o-card__section&#39;&gt;
+        &lt;p&gt;Cards can also have sub sections&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li class=&#39;u-ph--4 u-pt--2 o-card__section&#39;&gt;
+        &lt;p&gt;Which could be useful, for instance, for crealing lists&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li class=&#39;u-ph--4 u-pt--2 o-card__section&#39;&gt;
+        &lt;p&gt;Of related, scanable content&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/article
+</code></pre>
+<h4 id="include-with-">include with:</h4>
+<pre><code class="lang-scss">  @include jigsass-card($item: section[, $from, $until, $misc]);
+</code></pre>
+<h4 id="related-mixins-">Related Mixins:</h4>
+<p>  <a href="#card-mixin">jigsass-card</a>: Generates a list abstraction or an abstraction&#39;s modifier,
+  optionally limited to a specific breakpoint defined in
+  <a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="context-has-card">
+			<h3>Context: has-card</h3>
+			<div>
+				<p>Sets the background color of elements containing cards to the one defined in
+  <a href="#container-background">$jigsass-has-card-bgc</a>.</p>
+<p>  Automatically generated when generating any card related class (<code>o-card</code>, a modifier or an item).</p>
+
+				
+			</div>
+		</section>
+		
+			</div>
+		</section>
+		
+	<footer>Last modified Thursday, 7 April 2016 12:42</footer>
+</main>
+<script src="prism.js"></script>
+<script src="examples.js"></script>
+<script src="script.js"></script>
+
