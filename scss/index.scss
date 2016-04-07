@@ -1,0 +1,632 @@
+// *************************************
+//
+// # jigsass-objects-card
+// -> An individual piece of distinguished UI
+//
+// Author: TxHawks (tofu.hawks@gmail.com)
+// https://txhwaks.github.io/jigsass-objects-card/
+// https://github.com/txhwaks/jigsass-objects-card/
+//
+// *************************************
+
+@charset 'UTF-8';
+
+// -------------------------------------
+// Dependencies
+// -------------------------------------
+
+@if (not mixin-exists(jigsass-define-object)) {
+  @error '`jigsass-objects-card` has a dependency on `jigsass-tools-selectors`.
+    Please import it.';
+}
+
+
+
+
+
+// -------------------------------------
+// Introduction
+// -------------------------------------
+
+// stylelint-disable
+/* ---
+section: Card
+title: Introduction
+order: -10
+---
+
+[![NPM version][npm-image]][npm-url]
+[![Dependency Status][daviddm-image]][daviddm-url]
+
+An unopinionated, configurable implementation of the card UI pattern.
+
+#### Installation
+
+Using npm:
+
+```sh
+npm i -S jigsass-objects-card
+```
+
+#### Usage
+First, you need to import JigSass Card:
+
+```scss
+@import 'path/to/jigsass-objects-card/scss/index';
+```
+
+And optionally [reconfigure](#configuration) the defaults to your liking.
+
+Like all other JigSass modules, JigSass Card does not automatically generate any CSS when imported.
+In order to use its classes, you would have to first explicitly indicate your intention to use
+them, using the [jigsass-card](#card-mixin) mixin, Leaving us with small and maintainable css:
+
+```scss
+@include jigsass-card([$item, $modifier, $from-brekpoint, $until-breakpoint, $misc-breakpoint]);
+```
+
+All JigSass Card classes are responsive-enabled, using
+[JigSass MQ](https://txhawks.github.io/jigsass-tools-mq/) and the breakpoints defined in the
+[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)
+variable.
+
+Based on the arguments passed to the jigsass-card mixin, responsive modifiers are
+generated according to the following logic:
+
+```scss
+.o-card[--modifier|__item][-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
+```
+
+So, assuming the `medium`, `large` and `landscape` breakpoints are defined in `$jigsass-breakpoints`
+as `600px`, `1024px` and `(orientation: landscape)` respectively,
+
+```scss
+@include jigsass-card($modifier: raised);
+```
+will generate the `.o-card--raised` class, which is not limited to any media-query.
+
+```scss
+@include jigsass-card( $modifier: raised, $until: medium);
+```
+
+will generate the `.o-card--raised--until-medium` class, which will be in effect at
+`(max-width: 37.49em)` and will override styles in the default class until that point.
+
+```scss
+@include jigsass-card($modifier: raised, $from: large, $misc: landscape);
+```
+
+will generate the `.o-card--raised--from-large-when-landscape` class, which will go into
+effect at `(min-width: 64em) and (orientation: landscape)` and will override styles in the default
+class under these  conditions.
+
+Regardless of how many times a class is included, or where, it will only be generated once,
+where the `jigsass-objects-card` partial was imported, leaving us with a css file as small
+as possible, and a predictable cascade.
+
+The `jigsass-card` mixin will also generate a `o-has-card` class the first time it is called, which
+is used for setting the background color of elements containing cards.
+
+
+**License:** MIT
+
+
+
+[npm-image]: https://badge.fury.io/js/jigsass-objects-card.svg
+[npm-url]: https://npmjs.org/package/jigsass-objects-card
+
+[daviddm-image]: https://david-dm.org/TxHawks/jigsass-objects-card.svg?theme=shields.io
+[daviddm-url]: https://david-dm.org/TxHawks/jigsass-objects-card
+*/
+// stylelint-enable
+
+
+
+
+
+// -------------------------------------
+// Variables
+// -------------------------------------
+
+// stylelint-disable
+/* ---
+section: Card
+title: Configuration
+order: -1
+---
+Because of the many style variations cards could have throughout different designs
+and implementations, JigSass Card allows for complete modification through
+configuration variables.
+
+
+#### Container Background
+```scss
+$jigsass-has-card-bgc
+```
+
+**Type:** `Color`
+
+The background color of elements containing cards.
+
+Used for setting the background color of
+the `.o-has-card` contextual modifier.
+
+**Default:** `#ebebeb`
+
+
+#### Card Style
+```scss
+$jigsass-card-defaults
+```
+
+**Type:** `Map`
+
+CSS declarations to apply to cards.
+
+Since cards are such a prevalent UI pattern, yet with so
+many variations, subtle or otherwise, JigSass Cards come with defaults that
+are configurable to the last value and declaration. Don't like our defaults?
+Make your own.
+
+**Default:** `(background-color: #f0f0f0)`
+
+
+#### Card Modifiers
+```scss
+$jigsass-card-modifiers
+```
+
+ **Type:** `Map`
+
+CSS declarations for card modifiers, with each modifier being a nested map at the first level.
+
+**Default:**
+```scss
+(
+  raised: (
+    box-shadow: 0 4px 5px -2px rgba(#333, .5),
+    position: relative,
+    transition: .15s transform linear,
+
+    '&:after': (
+      bottom: 0,
+      box-shadow: 0 8px 6px -3px rgba(#333, .3),
+      content: '',
+      left: 0,
+      opacity: 0,
+      position: absolute,
+      right: 0,
+      top: 0,
+      transition: .15s opacity linear,
+      z-index: -1,
+    ),
+
+    '&:hover': (
+      transform: translatey(-4px) scale(1.01),
+
+      '&:after': (
+        opacity: 1,
+      ),
+    ),
+  )
+)
+```
+
+
+#### Section Border
+
+```scss
+$jigsass-card-section-border
+```
+
+**Type:** List
+
+Border style of a card section
+
+A list in the format of `length` `style` `color`
+
+**Default:** 1px solid #ccc !default;
+*/
+// stylelint-enable
+
+/// The background color of elements containing cards.
+///
+/// Used for setting the background color of
+/// the `.o-has-card` contextual modifier.
+$jigsass-has-card-bgc: #f0f0f0 !default;
+
+/// CSS declarations to apply to cards.
+///
+/// Since cards are such a prevalent UI pattern, yet with so
+/// many variations, subtle or otherwise, JigSass Cards come with defaults that
+/// are configurable to the last value and declaration. Don't like our defaults?
+/// Make your own.
+/// ---
+/// @type Map
+/// ---
+$jigsass-card-defaults: (
+  background-color: #fff,
+) !default;
+
+/// Card modifiers
+///
+/// CSS declarations for card modifiers, with each modifier being a nested
+/// map at the first level.
+/// ---
+/// @type Map
+/// ---
+$jigsass-card-modifiers: (
+  raised: (
+    box-shadow: 0 4px 5px -2px rgba(#333, .5),
+    position: relative,
+    transition: .15s transform linear,
+
+    '&:after': (
+      bottom: 0,
+      box-shadow: 0 8px 6px -3px rgba(#333, .3),
+      content: '',
+      left: 0,
+      opacity: 0,
+      position: absolute,
+      right: 0,
+      top: 0,
+      transition: .15s opacity linear,
+      z-index: -1,
+    ),
+
+    '&:hover': (
+      transform: translatey(-4px) scale(1.01),
+
+      '&:after': (
+        opacity: 1,
+      ),
+    ),
+  )
+) !default;
+
+/// Border style of a card section
+///
+/// A list in the format of `length` `style` `color`
+/// ---
+/// @type List
+/// ---
+$jigsass-card-section-border: 1px solid #ccc !default;
+
+
+
+// Used internally to store doclets
+$_doclet-store: () !default;
+
+// Used internally to ordering doclets
+$_jigsass-card-i: 1;
+
+
+
+
+
+// -------------------------------------
+// Functions
+// -------------------------------------
+
+//
+
+
+
+
+
+// -------------------------------------
+// Mixins
+// -------------------------------------
+
+// stylelint-disable
+/* ---
+section: Card
+title: Card Mixin
+order: 0
+---
+```scss
+@mixin jigsass-card($item: false, $modifier: false, $from: false, $until: false, $misc: false) { ... }
+```
+
+
+#### Description
+Generates a `card`, a modifier or an item class, optionally limited to a specific breakpoint defined in
+[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+
+Will also automatically generates the contextual `.o-has-card` modifier.
+
+#### Parameters
+Name | Description | Type | Default Value
+--- | --- | --- | ---
+`$item` | A `card` item, if relevant. Just the item's name, e.g., `$item: section` for `o-card__section`. | `String` or `Boolean` | false
+`$modifier` | A `card` modifier. | `String` or `Boolean` | false
+`$from` | The name of breakpoint used as the min-width condition | `String` or `Boolean` | false
+`$until` | The name of breakpoint used as the max-width condition | `String` or `Boolean` | false
+`$misc` | The name of a miscellaneous media query condition | `String` or `Boolean` | false
+
+
+#### Example
+```scss
+@include jigsass-card($from: medium);
+```
+
+Will generate:
+```scss
+@media (min-width: 37.5em) {
+  .o-card--from-medium { ... }
+  .o-has-card--from-medium { ... }
+}
+```
+*/
+// stylelint-enable
+/// Generates a `card`, a modifier or an item class,
+/// optionally limited to a specific breakpoint defined
+/// in $jigsass-breakpoints
+///
+/// Also automatically generates the contextual `.o-has-card` modifier.
+/// ---
+/// @param {String | Boolean} $item [false]
+///   A card item, if relevant. Just the item's name, e.g.,
+///   `$item: section` for `o-card__section`.
+/// @param {String | Boolean} $modifier [false]
+///   A card modifier, if relevant.
+/// @param {String | Boolean} $from [false]
+///   The name of breakpoint used as the min-width condition.
+/// @param {String | Boolean} $until [false]
+///   The name of breakpoint used as the max-width condition.
+/// @param {String | Boolean} $misc [false]
+///   The name of a miscellaneous media query condition.
+/// ---
+/// @example scss - SCSS input
+///   @include jigsass-card($from: medium);
+///
+/// @example scss - CSS output
+///   @media (min-width: 37.5em) {
+///     .o-card--from-medium { ... }
+///     .o-has-card--from-medium { ... }
+///   }
+/// ---
+@mixin jigsass-card($item: false, $modifier: false, $from: false, $until: false, $misc: false) {
+  @if (not mixin-exists(jigsass-object)) {
+    @error '`jigsass-objects-card` has a dependency on `jigsass-tools-selectors. ' +
+      'Please import it.';
+  }
+
+  $name: if($item, o-card__#{$item}, o-card);
+  @include jigsass-object($name, $from, $until, $misc, $modifier);
+  @include jigsass-object(o-has-card, $from, $until, $misc);
+}
+
+
+
+
+
+// -------------------------------------
+// Definitions
+// -------------------------------------
+
+@include jigsass-define-object(o-card) {
+  // An individual piece of distinguished UI
+  // ---
+  // 1. Include user defined styles
+  // ---
+  @if (length($jigsass-card-defaults) > 0) {
+    @include jigsass-classname() {
+      @if (not mixin-exists(jigsass-map2styles)) {
+        @error '`jigsass-objects-card` has a dependency on `jigsass-tools-selectors`.
+          Please import it.';
+      }
+
+      @include jigsass-map2styles($jigsass-card-defaults); // [1]
+
+      $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+      @if (not index($_doclet-store, $_doclet)) {
+        $_doclet-store: append($_doclet-store, $_doclet) !global;
+        // stylelint-disable
+  /* ---
+  section: Card
+  title: Base
+  order: #{$_jigsass-card-i}
+  ---
+  An individual piece of distinguished UI
+
+  Cards can be used to set apart pieces of content in an effective
+  yet geeric manner. It can contain an Image, headline, texts and
+  interactive elements.
+
+  ```example:html
+  <article class='o-card u-mb--4 u-pb--4 u-as--4'>
+    <figure>
+      <img src='https://unsplash.it/600/300?random' />
+    </figure>
+
+    <header class='u-ph--4'>
+      <h3>This is a card</h3>
+      <p><strong>A piece of distinguished UI</strong></p>
+    </header>
+
+    <p class='u-ph--4'>
+      Cards can be used to set apart pieces of content in an effective
+      yet geeric manner. It can contain an Image, headline, texts and
+      interactive elements.
+    </p>
+  </article>
+  ```
+
+  #### include with:
+  ```scss
+  @include jigsass-card([$from, $until, $misc]);
+  ```
+
+
+  #### Related Mixins:
+  [jigsass-card](#card-mixin): Generates a list abstraction or an abstraction's modifier,
+  optionally limited to a specific breakpoint defined in
+  [$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+  */
+        // stylelint-enable
+      }
+    }
+  }
+
+
+  // Modifiers
+  @each $mod, $rules in $jigsass-card-modifiers {
+    $_jigsass-card-i: $_jigsass-card-i + 1 !global;
+    @include jigsass-classname($modifier: $mod) {
+      @if (not mixin-exists(jigsass-map2styles)) {
+        @error '`jigsass-objects-card` has a dependency on `jigsass-tools-selectors`.
+          Please import it.';
+      }
+
+      @include jigsass-map2styles($rules);
+
+      $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+      @if (not index($_doclet-store, $_doclet)) {
+        $_doclet-store: append($_doclet-store, $_doclet) !global;
+        // stylelint-disable
+  /* ---
+  section: Card
+  title: Modifier: #{$mod}
+  order: #{$_jigsass-card-i}
+  ---
+  ```example:html
+  <article class='[ o-card o-card--#{$mod} ]  u-mb--4 u-pb--4 u-as--4'>
+    <figure>
+      <img src='https://unsplash.it/600/300?random' />
+    </figure>
+
+    <header class='u-ph--4'>
+      <h3>This is a card with a `#{$mod}` modifier</h3>
+      <p><strong>A piece of distinguished UI</strong></p>
+    </header>
+
+    <p class='u-ph--4'>
+      Cards can be used to set apart pieces of contenet in an effective
+      yet geeric manner. It can contain an Image, headline, texts and
+      interactive elements.
+    </p>
+  </article>
+  ```
+
+  #### include with:
+  ```scss
+  @include jigsass-card($modifier: #{$mod}[, $from, $until, $misc]);
+  ```
+
+
+  #### Related Mixins:
+  [jigsass-card](#card-mixin): Generates a list abstraction or an abstraction's modifier,
+  optionally limited to a specific breakpoint defined in
+  [$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+  */
+        // stylelint-enable
+      }
+
+    }
+  }
+}
+
+
+
+
+
+// -------------------------------------
+// Items
+// -------------------------------------
+
+// A distinct section within a card
+// ---
+@include jigsass-define-object(o-card__section) {
+  @include jigsass-classname() {
+    display: block;
+    position: relative;
+
+    * + &:before {
+      border-top: $jigsass-card-section-border;
+      content: '';
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+
+    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    @if (not index($_doclet-store, $_doclet)) {
+      $_doclet-store: append($_doclet-store, $_doclet) !global;
+      $_jigsass-card-i: $_jigsass-card-i + 1 !global;
+      // stylelint-disable
+  /* ---
+  section: Card
+  title: Item: Section
+  order: #{$_jigsass-card-i}
+  ---
+  A distinct section within a card
+
+  ```example:html
+  <article class='o-card u-mb--4 u-pb--4 u-as--4'>
+    <figure><img src='https://unsplash.it/600/200?random' /></figure>
+
+    <h3 class='u-ph--4'>This is a card with with sub sections</h3>
+
+    <ul class='o-card__section u-as--2'>
+      <li class='u-ph--4 u-pt--2 o-card__section'>
+        <p>Cards can also have sub sections</p>
+      </li>
+      <li class='u-ph--4 u-pt--2 o-card__section'>
+        <p>Which could be useful, for instance, for crealing lists</p>
+      </li>
+      <li class='u-ph--4 u-pt--2 o-card__section'>
+        <p>Of related, scanable content</p>
+      </li>
+    </ul>
+  </article
+  ```
+
+  #### include with:
+  ```scss
+  @include jigsass-card($item: section[, $from, $until, $misc]);
+  ```
+
+
+  #### Related Mixins:
+  [jigsass-card](#card-mixin): Generates a list abstraction or an abstraction's modifier,
+  optionally limited to a specific breakpoint defined in
+  [$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+  */
+      // stylelint-enable
+    }
+  }
+}
+
+
+
+
+
+// -------------------------------------
+// Context
+// -------------------------------------
+
+@include jigsass-define-object(o-has-card) {
+  @include jigsass-classname() {
+    background-color: $jigsass-has-card-bgc;
+
+    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    @if (not index($_doclet-store, $_doclet)) {
+      $_doclet-store: append($_doclet-store, $_doclet) !global;
+      $_jigsass-card-i: $_jigsass-card-i + 1 !global;
+      // stylelint-disable
+  /* ---
+  section: Card
+  title: Context: has-card
+  order: #{$_jigsass-card-i}
+  ---
+  Sets the background color of elements containing cards to the one defined in
+  [$jigsass-has-card-bgc](#container-background).
+
+  Automatically generated when generating any card related class (`o-card`, a modifier or an item).
+  */
+      // stylelint-enable
+    }
+  }
+}
