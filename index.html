@@ -24,12 +24,12 @@
 				</li>
 				
 				<li>
-					<a href="#configuration"><span>Configuration</span></a>
+					<a href="#css-outpout"><span>CSS Outpout</span></a>
 					
 				</li>
 				
 				<li>
-					<a href="#card-mixin"><span>Card Mixin</span></a>
+					<a href="#configuration"><span>Configuration</span></a>
 					
 				</li>
 				
@@ -72,9 +72,7 @@
 		<section id="introduction">
 			<h3>Introduction</h3>
 			<div>
-				<p><a href="https://npmjs.org/package/jigsass-objects-card"><img src="https://badge.fury.io/js/jigsass-objects-card.svg" alt="NPM version"></a>
-<a href="https://david-dm.org/TxHawks/jigsass-objects-card"><img src="https://david-dm.org/TxHawks/jigsass-objects-card.svg?theme=shields.io" alt="Dependency Status"></a></p>
-<p>An unopinionated, configurable implementation of the card UI pattern.</p>
+				<p>An unopinionated, configurable implementation of the card UI pattern.</p>
 <h4 id="installation">Installation</h4>
 <p>Using npm:</p>
 <pre><code class="lang-sh">npm i -S jigsass-objects-card
@@ -86,37 +84,215 @@
 <p>And optionally <a href="#configuration">reconfigure</a> the defaults to your liking.</p>
 <p>Like all other JigSass modules, JigSass Card does not automatically generate any CSS when imported.
 In order to use its classes, you would have to first explicitly indicate your intention to use
-them, using the <a href="#card-mixin">jigsass-card</a> mixin, Leaving us with small and maintainable css:</p>
-<pre><code class="lang-scss">@include jigsass-card([$item, $modifier, $from-brekpoint, $until-breakpoint, $misc-breakpoint]);
-</code></pre>
+them by enabling their generation in the associated <a href="#css-output">configurations map</a>, Leaving
+us only with CSS we need:</p>
 <p>All JigSass Card classes are responsive-enabled, using
 <a href="https://txhawks.github.io/jigsass-tools-mq/">JigSass MQ</a> and the breakpoints defined in the
 <a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>
 variable.</p>
-<p>Based on the arguments passed to the jigsass-card mixin, responsive modifiers are
+<p>Based on enabled selectors in the <a href="#css-output">configuration map</a>, responsive modifiers are
 generated according to the following logic:</p>
-<pre><code class="lang-scss">.o-card[--modifier|__item][-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
+<pre><code class="lang-scss">.o-card[--modifier][-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
 </code></pre>
 <p>So, assuming the <code>medium</code>, <code>large</code> and <code>landscape</code> breakpoints are defined in <code>$jigsass-breakpoints</code>
 as <code>600px</code>, <code>1024px</code> and <code>(orientation: landscape)</code> respectively,</p>
-<pre><code class="lang-scss">@include jigsass-card($modifier: raised);
+<pre><code class="lang-scss">$jigsass-card-conf: (
+  no-breakpoint: (
+    raised: true,
+  ),
+  until-medium: (
+    raised: true,
+  ),
+  from-large-when-landscape: (
+    raised: true,
+  ),
+)
 </code></pre>
-<p>will generate the <code>.o-card--raised</code> class, which is not limited to any media-query.</p>
-<pre><code class="lang-scss">@include jigsass-card( $modifier: raised, $until: medium);
-</code></pre>
-<p>will generate the <code>.o-card--raised--until-medium</code> class, which will be in effect at
-<code>(max-width: 37.49em)</code> and will override styles in the default class until that point.</p>
-<pre><code class="lang-scss">@include jigsass-card($modifier: raised, $from: large, $misc: landscape);
-</code></pre>
-<p>will generate the <code>.o-card--raised--from-large-when-landscape</code> class, which will go into
-effect at <code>(min-width: 64em) and (orientation: landscape)</code> and will override styles in the default
-class under these  conditions.</p>
-<p>Regardless of how many times a class is included, or where, it will only be generated once,
-where the <code>jigsass-objects-card</code> partial was imported, leaving us with a css file as small
-as possible, and a predictable cascade.</p>
-<p>The <code>jigsass-card</code> mixin will also generate a <code>o-has-card</code> class the first time it is called, which
-is used for setting the background color of elements containing cards.</p>
+<p>will generate the following classes:</p>
+<ul>
+<li><code>.o-card--raised</code>, which is not limited to any media-query.</li>
+<li><code>.o-card--raised--until-medium</code>, which will be in effect at
+<code>(max-width: 37.49em)</code> and will override styles in the default class
+until that point.</li>
+<li><code>.o-card--raised--from-large-when-landscape</code>, which will go into effect at
+<code>(min-width: 64em) and (orientation: landscape)</code> and will override styles
+in the default class under these  conditions.</li>
+</ul>
 <p><strong>License:</strong> MIT</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="css-outpout">
+			<h3>CSS Outpout</h3>
+			<div>
+				<p>By default, JigSass Card does not generate any CSS output when imported into
+a stylesheet. CSS output must be enabled on a per-selector basis, inside the
+dedicated configuration maps:</p>
+<h4 id="card-and-modifier-classes">Card and modifier classes</h4>
+<pre><code class="lang-scss">$jigsass-card-config
+</code></pre>
+<p><strong>Type:</strong> <code>Map</code></p>
+<p>Configuration map for enabling generation of
+card and card modifier classes.</p>
+<p><strong>Default:</strong> <code>()</code></p>
+<p><strong>Example:</strong></p>
+<pre><code class="lang-scss">$jigsass-card-conf: (
+  no-breakpoint: (
+    no-modifier: true,  // Enables generation of the `.o-card`
+                        // class outside of any media query.
+    foo: true,          // Enables generation of the `.o-card--foo`
+                        // modifier class outside of any media query.
+  ),
+  from-&lt;bp-name&gt;: (
+    no-modifier: true,  // Enables generation of the `.o-card--from-&lt;bp-name&gt;`
+                        // class inside a min-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+    foo: true,          // Enables generation of the `.o-card--foo--from-&lt;bp-name&gt;`
+                        // class inside a min-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  ),
+  until-&lt;bp-name&gt;: (
+    no-modifier: true,  // Enables generation of the `.o-card--until-&lt;bp-name&gt;`
+                        // class inside a max-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  foo: true,          // Enables generation of the `.o-card--foo--until-&lt;bp-name&gt;`
+                        // class inside a max-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  ),
+  when-&lt;bp-name&gt;: (
+    no-modifier: true,  // Enables generation of the `.o-card--when-&lt;bp-name&gt;`
+                        // class inside a misc media query
+                        // defined ins `$jigsass-breakpoints.features`.
+    foo: true,          // Enables generation of the `.o-card--foo--when-&lt;bp-name&gt;`
+                        // class inside a misc media query
+                        // defined ins `$jigsass-breakpoints.features`.
+  ),
+  from-&lt;bp-name&gt;-until-&lt;bp-name&gt;: (...);
+  from-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+  until-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+  from-&lt;bp-name&gt;-until-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+);
+</code></pre>
+<h4 id="card-items">Card Items</h4>
+<pre><code class="lang-scss">$jigsass-card-items-config: (item-name: ());
+</code></pre>
+<p><strong>Type:</strong> <code>Map</code></p>
+<p>Configuration map for enabling generation of
+card item classes.</p>
+<p><strong>Default:</strong> <code>()</code></p>
+<p><strong>Example:</strong></p>
+<pre><code class="lang-scss">$jigsass-card-items-conf: (
+  section: (
+    no-breakpoint: (
+      // Enables generation of the `.o-card__section`
+      // class outside of any media query.
+      no-modifier: true,
+
+      // Enables generation of the `.o-card__section--foo`
+      // modifier class outside of any media query.
+      foo: true,
+    ),
+    from-&lt;bp-name&gt;: (
+      // Enables generation of the `.o-card__section--from-&lt;bp-name&gt;`
+      // class inside a min-width media query
+      // defined ins `$jigsass-breakpoints.length`.
+      no-modifier: true,
+
+      // Enables generation of the `.o-card__section--foo--from-&lt;bp-name&gt;`
+      // class inside a min-width media query
+      // defined ins `$jigsass-breakpoints.length`.
+      foo: true,
+    ),
+    until-&lt;bp-name&gt;: (
+      // Enables generation of the `.o-card__section--until-&lt;bp-name&gt;`
+      // class inside a max-width media query
+      // defined ins `$jigsass-breakpoints.length`.
+      no-modifier: true,
+
+      // Enables generation of the `.o-card__section--foo--until-&lt;bp-name&gt;`
+      // class inside a max-width media query
+      // defined ins `$jigsass-breakpoints.length`.
+      foo: true,
+    ),
+    when-&lt;bp-name&gt;: (
+      // Enables generation of the `.o-card__section--when-&lt;bp-name&gt;`
+      // class inside a misc media query
+      // defined ins `$jigsass-breakpoints.features`.
+      no-modifier: true,
+
+      // Enables generation of the `.o-card__section--foo--when-&lt;bp-name&gt;`
+      // class inside a misc media query
+      // defined ins `$jigsass-breakpoints.features`.
+      foo: true,
+    ),
+    from-&lt;bp-name&gt;-until-&lt;bp-name&gt;: (...);
+    from-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+    until-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+    from-&lt;bp-name&gt;-until-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+  ),
+);
+</code></pre>
+<h4 id="context-classes">Context classes</h4>
+<pre><code class="lang-scss">$jigsass-card-context-config: (item-name: ());
+</code></pre>
+<p><strong>Type:</strong> <code>Map</code></p>
+<p>Configuration map for enabling generation of
+card context classes.</p>
+<p><strong>Default:</strong> <code>()</code></p>
+<p><strong>Example:</strong></p>
+<pre><code class="lang-scss">$jigsass-card-context-conf: (
+  has-card: (
+    no-breakpoint: (
+      // Enables generation of the `.o-has-card`
+      // class outside of any media query.
+      no-modifier: true,
+
+      // Enables generation of the `.o-has-card--foo`
+      // modifier class outside of any media query.
+      foo: true,
+    ),
+    from-&lt;bp-name&gt;: (
+      // Enables generation of the `.o-has-card--from-&lt;bp-name&gt;`
+      // class inside a min-width media query
+      // defined ins `$jigsass-breakpoints.length`.
+      no-modifier: true,
+
+      // Enables generation of the `.o-has-card--foo--from-&lt;bp-name&gt;`
+      // class inside a min-width media query
+      // defined ins `$jigsass-breakpoints.length`.
+      foo: true,
+    ),
+    until-&lt;bp-name&gt;: (
+      // Enables generation of the `.o-has-card--until-&lt;bp-name&gt;`
+      // class inside a max-width media query
+      // defined ins `$jigsass-breakpoints.length`.
+      no-modifier: true,
+
+      // Enables generation of the `.o-has-card--foo--until-&lt;bp-name&gt;`
+      // class inside a max-width media query
+      // defined ins `$jigsass-breakpoints.length`.
+      foo: true,
+    ),
+    when-&lt;bp-name&gt;: (
+      // Enables generation of the `.o-has-card--when-&lt;bp-name&gt;`
+      // class inside a misc media query
+      // defined ins `$jigsass-breakpoints.features`.
+      no-modifier: true,
+
+      // Enables generation of the `.o-has-card--foo--when-&lt;bp-name&gt;`
+      // class inside a misc media query
+      // defined ins `$jigsass-breakpoints.features`.
+      foo: true,
+    ),
+    from-&lt;bp-name&gt;-until-&lt;bp-name&gt;: (...);
+    from-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+    until-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+    from-&lt;bp-name&gt;-until-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+  ),
+);
+</code></pre>
 
 				
 			</div>
@@ -193,72 +369,6 @@ Make your own.</p>
 			</div>
 		</section>
 		
-		<section id="card-mixin">
-			<h3>Card Mixin</h3>
-			<div>
-				<pre><code class="lang-scss">@mixin jigsass-card($item: false, $modifier: false, $from: false, $until: false, $misc: false) { ... }
-</code></pre>
-<h4 id="description">Description</h4>
-<p>Generates a <code>card</code>, a modifier or an item class, optionally limited to a specific breakpoint defined in
-<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
-<p>Will also automatically generates the contextual <code>.o-has-card</code> modifier.</p>
-<h4 id="parameters">Parameters</h4>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Type</th>
-<th>Default Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>$item</code></td>
-<td>A <code>card</code> item, if relevant. Just the item&#39;s name, e.g., <code>$item: section</code> for <code>o-card__section</code>.</td>
-<td><code>String</code> or <code>Boolean</code></td>
-<td>false</td>
-</tr>
-<tr>
-<td><code>$modifier</code></td>
-<td>A <code>card</code> modifier.</td>
-<td><code>String</code> or <code>Boolean</code></td>
-<td>false</td>
-</tr>
-<tr>
-<td><code>$from</code></td>
-<td>The name of breakpoint used as the min-width condition</td>
-<td><code>String</code> or <code>Boolean</code></td>
-<td>false</td>
-</tr>
-<tr>
-<td><code>$until</code></td>
-<td>The name of breakpoint used as the max-width condition</td>
-<td><code>String</code> or <code>Boolean</code></td>
-<td>false</td>
-</tr>
-<tr>
-<td><code>$misc</code></td>
-<td>The name of a miscellaneous media query condition</td>
-<td><code>String</code> or <code>Boolean</code></td>
-<td>false</td>
-</tr>
-</tbody>
-</table>
-<h4 id="example">Example</h4>
-<pre><code class="lang-scss">@include jigsass-card($from: medium);
-</code></pre>
-<p>Will generate:</p>
-<pre><code class="lang-scss">@media (min-width: 37.5em) {
-  .o-card--from-medium { ... }
-  .o-has-card--from-medium { ... }
-}
-</code></pre>
-
-				
-			</div>
-		</section>
-		
 		<section id="base">
 			<h3>Base</h3>
 			<div>
@@ -283,13 +393,6 @@ Make your own.</p>
     &lt;/p&gt;
   &lt;/article&gt;
 </code></pre>
-<h4 id="include-with-">include with:</h4>
-<pre><code class="lang-scss">  @include jigsass-card([$from, $until, $misc]);
-</code></pre>
-<h4 id="related-mixins-">Related Mixins:</h4>
-<p>  <a href="#card-mixin">jigsass-card</a>: Generates a list abstraction or an abstraction&#39;s modifier,
-  optionally limited to a specific breakpoint defined in
-  <a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
 
 				
 			</div>
@@ -315,13 +418,6 @@ Make your own.</p>
     &lt;/p&gt;
   &lt;/article&gt;
 </code></pre>
-<h4 id="include-with-">include with:</h4>
-<pre><code class="lang-scss">  @include jigsass-card($modifier: raised[, $from, $until, $misc]);
-</code></pre>
-<h4 id="related-mixins-">Related Mixins:</h4>
-<p>  <a href="#card-mixin">jigsass-card</a>: Generates a list abstraction or an abstraction&#39;s modifier,
-  optionally limited to a specific breakpoint defined in
-  <a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
 
 				
 			</div>
@@ -349,13 +445,6 @@ Make your own.</p>
     &lt;/ul&gt;
   &lt;/article
 </code></pre>
-<h4 id="include-with-">include with:</h4>
-<pre><code class="lang-scss">  @include jigsass-card($item: section[, $from, $until, $misc]);
-</code></pre>
-<h4 id="related-mixins-">Related Mixins:</h4>
-<p>  <a href="#card-mixin">jigsass-card</a>: Generates a list abstraction or an abstraction&#39;s modifier,
-  optionally limited to a specific breakpoint defined in
-  <a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
 
 				
 			</div>
@@ -375,7 +464,7 @@ Make your own.</p>
 			</div>
 		</section>
 		
-	<footer>Last modified Thursday, 7 April 2016 13:54</footer>
+	<footer>Last modified Thursday, 21 April 2016 19:00</footer>
 </main>
 <script src="prism.js"></script>
 <script src="examples.js"></script>
