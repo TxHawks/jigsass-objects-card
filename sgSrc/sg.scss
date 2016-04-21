@@ -31,17 +31,30 @@
 // Styles
 // --------------------
 
+$jigsass-card-conf: (
+  no-breakpoint: (
+    no-modifier: true,
+    raised: true,
+  ),
+);
+
+$jigsass-card-items-conf: (
+  section: (
+    no-breakpoint: (
+      no-modifier: true,
+    ),
+  ),
+);
+
+$jigsass-card-context-conf: (
+  has-card: (
+    no-breakpoint: (
+      no-modifier: true,
+    ),
+  ),
+);
+
 @import 'index.scss';
-
-@include jigsass-card();
-@include jigsass-card($modifier: raised);
-@include jigsass-card($item: section);
-
-
-
-// --- utils --- //
-// $_doclet-store: append($_doclet-store, u-cf);
-// @import '../node_modules/jigsass-utils-clearfix/scss/index';
 
 
 
