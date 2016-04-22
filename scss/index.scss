@@ -318,34 +318,34 @@ $jigsass-card-context-conf: (
 /// card and card modifier classes.
 /// ---
 /// @example
-///		$jigsass-btn-conf: (
+///		$jigsass-card-conf: (
 ///    no-breakpoint: (
-///      no-modifier: true,  // Enables generation of the `.o-btn`
+///      no-modifier: true,  // Enables generation of the `.o-card`
 ///                          // class outside of any media query.
-///      foo: true,          // Enables generation of the `.o-btn--foo`
+///      foo: true,          // Enables generation of the `.o-card--foo`
 ///                          // modifier class outside of any media query.
 ///    ),
 ///    from-<bp-name>: (
-///      no-modifier: true,  // Enables generation of the `.o-btn--from-<bp-name>`
+///      no-modifier: true,  // Enables generation of the `.o-card--from-<bp-name>`
 ///                          // class inside a min-width media query
 ///                          // defined ins `$jigsass-breakpoints.length`.
-///      foo: true,          // Enables generation of the `.o-btn--foo--from-<bp-name>`
+///      foo: true,          // Enables generation of the `.o-card--foo--from-<bp-name>`
 ///                          // class inside a min-width media query
 ///                          // defined ins `$jigsass-breakpoints.length`.
 ///    ),
 ///    until-<bp-name>: (
-///      no-modifier: true,  // Enables generation of the `.o-btn--until-<bp-name>`
+///      no-modifier: true,  // Enables generation of the `.o-card--until-<bp-name>`
 ///                          // class inside a max-width media query
 ///                          // defined ins `$jigsass-breakpoints.length`.
-///     foo: true,          // Enables generation of the `.o-btn--foo--until-<bp-name>`
+///     foo: true,          // Enables generation of the `.o-card--foo--until-<bp-name>`
 ///                          // class inside a max-width media query
 ///                          // defined ins `$jigsass-breakpoints.length`.
 ///    ),
 ///    when-<bp-name>: (
-///      no-modifier: true,  // Enables generation of the `.o-btn--when-<bp-name>`
+///      no-modifier: true,  // Enables generation of the `.o-card--when-<bp-name>`
 ///                          // class inside a misc media query
 ///                          // defined ins `$jigsass-breakpoints.features`.
-///      foo: true,          // Enables generation of the `.o-btn--foo--when-<bp-name>`
+///      foo: true,          // Enables generation of the `.o-card--foo--when-<bp-name>`
 ///                          // class inside a misc media query
 ///                          // defined ins `$jigsass-breakpoints.features`.
 ///    ),
